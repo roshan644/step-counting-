@@ -1,0 +1,135 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitness Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="tracker">
+    <h1>Fitness Tracker</h1>
+    <div class="counters">
+      <div id="steps">
+        <h2>Steps</h2>
+        <p id="stepCount">0</p>
+      </div>
+      <div id="calories">
+        <h2>Calories</h2>
+        <p id="calorieCount">0</p>
+      </div>
+      <div id="heartRate">
+        <h2>Heart Rate</h2>
+        <p id="heartRateCount">-- BPM</p>
+      </div>
+    </div>
+    <canvas id="chart" width="400" height="200"></canvas>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html><style>/* styles.css */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f4f4f9;
+  color: #333;
+}
+
+.tracker {
+  text-align: center;
+  padding: 20px;
+}
+
+.counters {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.counters div {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  color: #444;
+}
+
+h2 {
+  margin: 0;
+  color: #666;
+}
+
+p {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 10px 0 0;
+}
+
+canvas {
+  margin-top: 20px;
+}</style><script>// script.js
+document.addEventListener("DOMContentLoaded", () => {
+  let steps = 0;
+  let calories = 0;
+  let heartRate = 75;
+
+  const stepCount = document.getElementById("stepCount");
+  const calorieCount = document.getElementById("calorieCount");
+  const heartRateCount = document.getElementById("heartRateCount");
+
+  // Simulate step counting
+  setInterval(() => {
+    steps += Math.floor(Math.random() * 10);
+    calories += (steps * 0.04).toFixed(2); // Approx. calories per step
+    stepCount.textContent = steps;
+    calorieCount.textContent = calories.toFixed(2);
+  }, 1000);
+
+  // Simulate heart rate
+  setInterval(() => {
+    heartRate = 70 + Math.floor(Math.random() * 10); // Randomized heart rate
+    heartRateCount.textContent = `${heartRate} BPM`;
+  }, 2000);
+
+  // Chart.js for professional chart
+  const ctx = document.getElementById("chart").getContext("2d");
+  const chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["0s", "5s", "10s", "15s", "20s"],
+      datasets: [
+        {
+          label: "Heart Rate (BPM)",
+          data: [75, 76, 77, 74, 78],
+          borderColor: "red",
+          borderWidth: 2,
+          fill: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true,
+        },
+      },
+    },
+  });
+
+  // Update chart dynamically
+  setInterval(() => {
+    const time = `${Math.floor(Date.now() / 1000) % 60}s`;
+    chart.data.labels.push(time);
+    chart.data.labels.shift();
+    chart.data.datasets[0].data.push(heartRate);
+    chart.data.datasets[0].data.shift();
+    chart.update();
+  }, 5000);
+});</script>
